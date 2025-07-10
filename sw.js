@@ -1,12 +1,12 @@
-const CACHE_NAME = 'strefa-swiatla-cache-v1';
+const CACHE_NAME = 'pilot-remote-cache-v1';
 const urlsToCache = [
     '/',
     '/index.html',
     '/css/style.css',
-    '/js/script.js',
+    '/js/app.js',
+    '/manifest.json',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-    'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
-    'https://cdn.jsdelivr.net/npm/chart.js'
+    'https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap'
 ];
 
 self.addEventListener('install', event => {
