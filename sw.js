@@ -5,7 +5,7 @@ const urlsToCache = [
     '/css/style.css',
     '/js/script.js',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-    'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap',
+    'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap',
     'https://cdn.jsdelivr.net/npm/chart.js'
 ];
 

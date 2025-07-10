@@ -1,10 +1,10 @@
 {
-  "name": "Smart Lighting",
+  "name": "Smart Lighting Control",
   "short_name": "Lighting",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#00ccff",
+  "background_color": "#0a0f1c",
+  "theme_color": "#3b82f6",
   "icons": [
     {
       "src": "icons/icon-192.png",
