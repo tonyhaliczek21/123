@@ -1,20 +1,26 @@
 {
-  "name": "Smart Lighting",
-  "short_name": "Lighting",
+  "name": "ESP32 IR Pilot",
+  "short_name": "Pilot",
+  "description": "Sterowanie oświetleniem ESP32 przez infrared",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#00ccff",
+  "orientation": "portrait",
+  "background_color": "#f8f9fa",
+  "theme_color": "#2ecc71",
   "icons": [
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["utilities", "smart-home"],
+  "lang": "pl"
 }

@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Temporary files
+.tmp/
+tmp/
+*.tmp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.backup
+js/script.js.backup
+
+# Development files
+icons/create_icons.py

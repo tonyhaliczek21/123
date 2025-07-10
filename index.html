@@ -3,129 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inteligentne Oświetlenie v4.2</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>ESP32 IR Pilot</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#2ecc71">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Pilot">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="background-effects">
-        <div class="glow-circle pos1"></div>
-        <div class="glow-circle pos2"></div>
-    </div>
-    <div class="container">
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">Pilot</h1>
+        </header>
 
-        <div id="loginScreen">
-            <div class="login-card">
-                <h1><i class="fa-solid fa-house-signal"></i> Panel Sterowania</h1>
-                <p class="login-subtitle">Inteligentne Oświetlenie</p>
-                <form id="loginForm" autocomplete="off">
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-key"></i>
-                        <input type="password" id="loginPassword" placeholder="Podaj hasło" required autofocus>
-                    </div>
-                    <button type="submit" class="login-btn">Zaloguj się</button>
-                    <p id="loginError" class="login-error"></p>
-                </form>
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="connection-status">
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span id="statusText">Łączenie z ESP32 klaj886...</span>
             </div>
         </div>
 
-        <div id="mainPanel" style="display:none;">
-            <header class="main-header">
-                <div>
-                    <h1><i class="fa-solid fa-brain-circuit"></i> Strefa Światła 4.2</h1>
-                    <p>Panel zarządzania inteligentnym oświetleniem</p>
-                </div>
-            </header>
+        <!-- Tab Navigation -->
+        <nav class="tab-navigation">
+            <button class="tab-button active" data-tab="pilot">
+                <span class="tab-icon">🏠</span>
+                <span class="tab-label">Pilot</span>
+            </button>
+            <button class="tab-button" data-tab="nauka">
+                <span class="tab-icon">🎓</span>
+                <span class="tab-label">Nauka</span>
+            </button>
+            <button class="tab-button" data-tab="kody">
+                <span class="tab-icon">💾</span>
+                <span class="tab-label">Kody</span>
+            </button>
+            <button class="tab-button" data-tab="status">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-label">Status</span>
+            </button>
+        </nav>
 
-            <main class="main-grid">
-
-                <section id="ledControlCard" class="card">
-                    <h3 class="card-title"><i class="fa-solid fa-lightbulb-on"></i> Sterowanie Główne</h3>
-                    <div class="led-status-container">
-                        <div id="ledStatusIcon" class="led-icon"><i class="fa-solid fa-power-off"></i></div>
-                        <div class="led-info">
-                            <h2 id="ledStatus">Wyłączone</h2>
-                            <p id="ledTimer">Naciśnij przycisk, aby włączyć</p>
-                        </div>
-                    </div>
-                    <div class="progress-bar-container" id="ledProgressBg">
-                        <div class="progress-bar" id="ledProgressBar"></div>
-                    </div>
-
-                    <button class="toggle-button" onclick="toggleLed()">
-                        <span class="button-text">Przełącz Oświetlenie</span>
-                        <span class="button-loader"><i class="fa-solid fa-spinner fa-spin"></i></span>
-                    </button>
-                </section>
-
-                <section class="card">
-                    <h3 class="card-title"><i class="fa-solid fa-cloud-sun"></i> Status & Pogoda</h3>
-                    <div class="weather-display">
-                        <i id="weatherIcon" class="fa-solid fa-spinner fa-spin weather-icon"></i>
-                        <div class="weather-details">
-                            <h2 id="temperature">--°C</h2>
-                            <p id="weatherDescription">Ładowanie...</p>
-                        </div>
-                    </div>
-                    <p class="location-name"><i class="fa-solid fa-location-dot"></i> <span id="locationName">...</span></p>
-                    <div class="sun-info">
-                        <span><i class="fa-solid fa-sunrise"></i> Wschód: <b id="sunrise">...</b></span>
-                        <span><i class="fa-solid fa-sunset"></i> Zachód: <b id="sunset">...</b></span>
-                    </div>
-                    <div id="pirStatus" class="pir-status">
-                        <i class="fa-solid fa-circle-notch fa-spin"></i> Ładowanie statusu PIR...
+        <!-- Tab Content -->
+        <main class="tab-container">
+            <!-- Pilot Tab -->
+            <div id="pilot-tab" class="tab-content active">
+                <!-- Ceiling Lights Section -->
+                <section class="control-section">
+                    <h2 class="section-title">Oświetlenie sufitowe</h2>
+                    <div class="button-grid">
+                        <button class="control-button primary" data-button-id="ceiling_on">ON</button>
+                        <button class="control-button secondary" data-button-id="ceiling_off">OFF</button>
+                        <button class="control-button accent" data-button-id="ceiling_bright_up">🔆+</button>
+                        <button class="control-button accent" data-button-id="ceiling_bright_down">🔅-</button>
+                        <button class="control-button warm" data-button-id="ceiling_warm">🌡️ Ciepły</button>
+                        <button class="control-button cool" data-button-id="ceiling_cool">❄️ Zimny</button>
                     </div>
                 </section>
 
-                <section class="card card-wide">
-                    <h3 class="card-title"><i class="fa-solid fa-robot"></i> Automatyka & Progi LDR</h3>
-                    <div class="ldr-automation-grid">
-                        <div class="ldr-chart-container">
-                            <canvas id="ldrChart"></canvas>
-                            <div class="chart-center-text">
-                                <span id="ldrValue">...</span>
-                                <small>LDR</small>
+                <!-- TV LED Section -->
+                <section class="control-section">
+                    <h2 class="section-title">LED za telewizorem</h2>
+                    <div class="button-grid">
+                        <button class="control-button red" data-button-id="tv_red">🔴</button>
+                        <button class="control-button green" data-button-id="tv_green">🟢</button>
+                        <button class="control-button blue" data-button-id="tv_blue">🔵</button>
+                        <button class="control-button white" data-button-id="tv_white">⚪</button>
+                        <button class="control-button orange" data-button-id="tv_orange">🟠</button>
+                        <button class="control-button yellow" data-button-id="tv_yellow">🟡</button>
+                        <button class="control-button purple" data-button-id="tv_purple">🟣</button>
+                        <button class="control-button rainbow" data-button-id="tv_rgb">🌈 RGB</button>
+                        <button class="control-button special" data-button-id="tv_fade">✨ Fade</button>
+                        <button class="control-button special" data-button-id="tv_strobe">⚡ Strobe</button>
+                        <button class="control-button accent" data-button-id="tv_bright_up">🔆+</button>
+                        <button class="control-button accent" data-button-id="tv_bright_down">🔅-</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Nauka Tab -->
+            <div id="nauka-tab" class="tab-content">
+                <section class="learn-section">
+                    <h2 class="section-title">Programowanie przycisków</h2>
+                    <p class="learn-instructions">Kliknij przycisk do zaprogramowania</p>
+                    
+                    <div class="learn-mode-status">
+                        <span class="learn-status-text">⏱️ Tryb nauki: </span>
+                        <span id="learnModeStatus" class="learn-status-indicator">NIEAKTYWNY</span>
+                    </div>
+
+                    <div class="learn-group">
+                        <h3 class="learn-group-title">Oświetlenie sufitowe:</h3>
+                        <div class="learn-button-grid">
+                            <button class="learn-button" data-learn-id="ceiling_on">Naucz ON</button>
+                            <button class="learn-button" data-learn-id="ceiling_off">Naucz OFF</button>
+                            <button class="learn-button" data-learn-id="ceiling_bright_up">Naucz 🔆+</button>
+                            <button class="learn-button" data-learn-id="ceiling_bright_down">Naucz 🔅-</button>
+                            <button class="learn-button" data-learn-id="ceiling_warm">Naucz 🌡️</button>
+                            <button class="learn-button" data-learn-id="ceiling_cool">Naucz ❄️</button>
+                        </div>
+                    </div>
+
+                    <div class="learn-group">
+                        <h3 class="learn-group-title">LED za TV:</h3>
+                        <div class="learn-button-grid">
+                            <button class="learn-button" data-learn-id="tv_red">Naucz 🔴</button>
+                            <button class="learn-button" data-learn-id="tv_green">Naucz 🟢</button>
+                            <button class="learn-button" data-learn-id="tv_blue">Naucz 🔵</button>
+                            <button class="learn-button" data-learn-id="tv_white">Naucz ⚪</button>
+                            <button class="learn-button" data-learn-id="tv_orange">Naucz 🟠</button>
+                            <button class="learn-button" data-learn-id="tv_yellow">Naucz 🟡</button>
+                            <button class="learn-button" data-learn-id="tv_purple">Naucz 🟣</button>
+                            <button class="learn-button" data-learn-id="tv_rgb">Naucz 🌈</button>
+                            <button class="learn-button" data-learn-id="tv_fade">Naucz ✨</button>
+                            <button class="learn-button" data-learn-id="tv_strobe">Naucz ⚡</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Kody Tab -->
+            <div id="kody-tab" class="tab-content">
+                <section class="codes-section">
+                    <h2 class="section-title">Zapisane kody IR</h2>
+                    <div id="codesContainer" class="codes-container">
+                        <div class="codes-loading">Ładowanie kodów...</div>
+                    </div>
+                    
+                    <div class="codes-actions">
+                        <button class="action-button backup" id="backupVPS">💾 Backup VPS</button>
+                        <button class="action-button backup" id="backupLocal">📱 Backup Local</button>
+                        <button class="action-button refresh" id="refreshCodes">🔄 Odczytaj z ESP</button>
+                        <button class="action-button delete" id="clearCodes">🗑️ Wyczyść</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Status Tab -->
+            <div id="status-tab" class="tab-content">
+                <section class="status-section">
+                    <h2 class="section-title">Status ESP32</h2>
+                    
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="status-label">🔗 WebSocket:</span>
+                            <span id="wsStatus" class="status-value">ROZŁĄCZONY</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">📡 ESP ID:</span>
+                            <span id="espId" class="status-value">klaj886</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">🌐 IP:</span>
+                            <span id="espIP" class="status-value">---.---.---.---</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">📶 RSSI:</span>
+                            <span id="wifiRSSI" class="status-value">-- dBm</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">⏱️ Uptime:</span>
+                            <span id="uptime" class="status-value">--h --m</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">🧠 RAM:</span>
+                            <span id="freeRAM" class="status-value">---KB wolne</span>
+                        </div>
+                    </div>
+
+                    <div class="ir-stats">
+                        <h3 class="stats-title">📊 Statystyki IR:</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">▶️ Wysłane:</span>
+                                <span id="irSent" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">📥 Odebrane:</span>
+                                <span id="irReceived" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">✅ Prawidłowe:</span>
+                                <span id="irValid" class="stat-value">0</span>
                             </div>
                         </div>
-                        <div class="ldr-controls">
-                             <div class="automation-mode">
-                                <span class="mode-label">Tryb Słońce</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="modeSelect" onchange="setControlMode(this.checked ? 1 : 0)">
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="mode-label">Tryb LDR</span>
-                            </div>
-                            <div class="ldr-config">
-                                <h4>Ustaw Progi Aktywacji LDR</h4>
-                                <div class="range-group">
-                                    <label for="ldrThresholdLow">MIN</label>
-                                    <input type="range" id="ldrThresholdLowSlider" min="0" max="1023" step="1" oninput="onRangeInputSliderLow()">
-                                    <input type="number" id="ldrThresholdLow" min="0" max="1023" onchange="onRangeInputNum()">
-                                </div>
-                                <div class="range-group">
-                                    <label for="ldrThresholdHigh">MAX</label>
-                                    <input type="range" id="ldrThresholdHighSlider" min="0" max="1023" step="1" oninput="onRangeInputSliderHigh()">
-                                    <input type="number" id="ldrThresholdHigh" min="0" max="1023" onchange="onRangeInputNum()">
-                                </div>
-                            </div>
-                             <button class="reset-button" onclick="resetLdrSettings()"><i class="fa-solid fa-arrows-rotate"></i> Resetuj Progi</button>
-                        </div>
                     </div>
-                </section>
 
-                <section class="card card-wide">
-                    <h3 class="card-title"><i class="fa-solid fa-list-ul"></i> Dziennik Zdarzeń</h3>
-                    <div id="logsList" class="logs-list">
-                        <div class="log-placeholder"><i class="fa-solid fa-spinner fa-spin"></i> Ładowanie logów...</div>
+                    <div class="status-actions">
+                        <button class="action-button restart" id="restartESP">🔄 Restart ESP32</button>
                     </div>
                 </section>
-            </main>
-        </div>
+            </div>
+        </main>
+
+        <!-- Toast Container -->
+        <div id="toastContainer" class="toast-container"></div>
     </div>
-    <script src="js/script.js"></script>
+
+    <script src="js/app.js"></script>
+    
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
