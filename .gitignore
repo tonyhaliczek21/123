@@ -1,0 +1,43 @@
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Logs
+*.log
+
+# PWA cache
+sw-cache/
+
+# Local test files
+test_*.html
+test_*.js
+test_*.py
+
+# Screenshots (already in GitHub)
+*.png
+*.jpg
+*.jpeg
+!icons/*.png
