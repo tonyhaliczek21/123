@@ -3,129 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inteligentne Oświetlenie v4.2</title>
+    <title>Pilot - ESP32 Remote Control</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <meta name="theme-color" content="#10B981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Pilot">
 </head>
 <body>
     <div class="background-effects">
         <div class="glow-circle pos1"></div>
         <div class="glow-circle pos2"></div>
     </div>
-    <div class="container">
-
-        <div id="loginScreen">
-            <div class="login-card">
-                <h1><i class="fa-solid fa-house-signal"></i> Panel Sterowania</h1>
-                <p class="login-subtitle">Inteligentne Oświetlenie</p>
-                <form id="loginForm" autocomplete="off">
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-key"></i>
-                        <input type="password" id="loginPassword" placeholder="Podaj hasło" required autofocus>
-                    </div>
-                    <button type="submit" class="login-btn">Zaloguj się</button>
-                    <p id="loginError" class="login-error"></p>
-                </form>
+    
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">🎮 Pilot</h1>
+            <div class="connection-status" id="connectionStatus">
+                <i class="fa-solid fa-wifi" id="connectionIcon"></i>
+                <span id="connectionText">Łączenie...</span>
             </div>
-        </div>
+        </header>
 
-        <div id="mainPanel" style="display:none;">
-            <header class="main-header">
-                <div>
-                    <h1><i class="fa-solid fa-brain-circuit"></i> Strefa Światła 4.2</h1>
-                    <p>Panel zarządzania inteligentnym oświetleniem</p>
+        <!-- Main Content -->
+        <main class="app-main" id="appMain">
+            <!-- Room Tab Content -->
+            <div class="tab-content active" id="roomTab">
+                <!-- Ceiling Light Section -->
+                <section class="light-section">
+                    <h2><i class="fa-solid fa-lightbulb"></i> Oświetlenie Sufitowe</h2>
+                    <div class="light-controls">
+                        <div class="power-buttons">
+                            <button class="power-btn on" onclick="sendIRCode('ceiling_on')">
+                                <i class="fa-solid fa-power-off"></i>
+                                <span>Włącz</span>
+                            </button>
+                            <button class="power-btn off" onclick="sendIRCode('ceiling_off')">
+                                <i class="fa-solid fa-power-off"></i>
+                                <span>Wyłącz</span>
+                            </button>
+                        </div>
+                        <div class="remote-grid">
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_on')" data-code="ceiling_on">
+                                <span>ON</span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_off')" data-code="ceiling_off">
+                                <span>OFF</span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_mem')" data-code="ceiling_mem">
+                                <span>MEM</span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_50')" data-code="ceiling_50">
+                                <span>50%</span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_plus')" data-code="ceiling_plus">
+                                <span><i class="fa-solid fa-plus"></i></span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_minus')" data-code="ceiling_minus">
+                                <span><i class="fa-solid fa-minus"></i></span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_cct')" data-code="ceiling_cct">
+                                <span>CCT</span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('ceiling_night')" data-code="ceiling_night">
+                                <span>Night</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ambilight TV Section -->
+                <section class="light-section">
+                    <h2><i class="fa-solid fa-tv"></i> Ambilight TV</h2>
+                    <div class="light-controls">
+                        <div class="power-buttons">
+                            <button class="power-btn on" onclick="sendIRCode('tv_on')">
+                                <i class="fa-solid fa-power-off"></i>
+                                <span>Włącz</span>
+                            </button>
+                            <button class="power-btn off" onclick="sendIRCode('tv_off')">
+                                <i class="fa-solid fa-power-off"></i>
+                                <span>Wyłącz</span>
+                            </button>
+                        </div>
+                        <div class="remote-grid">
+                            <button class="remote-btn" onclick="sendIRCode('tv_bright_up')" data-code="tv_bright_up">
+                                <span><i class="fa-solid fa-plus"></i></span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('tv_bright_down')" data-code="tv_bright_down">
+                                <span><i class="fa-solid fa-minus"></i></span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('tv_play')" data-code="tv_play">
+                                <span><i class="fa-solid fa-play"></i></span>
+                            </button>
+                            <button class="remote-btn" onclick="sendIRCode('tv_pause')" data-code="tv_pause">
+                                <span><i class="fa-solid fa-pause"></i></span>
+                            </button>
+                        </div>
+                        <div class="color-palette">
+                            <button class="color-btn" style="background: #ff0000;" onclick="sendIRCode('tv_red')" data-code="tv_red"></button>
+                            <button class="color-btn" style="background: #00ff00;" onclick="sendIRCode('tv_green')" data-code="tv_green"></button>
+                            <button class="color-btn" style="background: #0000ff;" onclick="sendIRCode('tv_blue')" data-code="tv_blue"></button>
+                            <button class="color-btn" style="background: #ffff00;" onclick="sendIRCode('tv_yellow')" data-code="tv_yellow"></button>
+                            <button class="color-btn" style="background: #ff00ff;" onclick="sendIRCode('tv_magenta')" data-code="tv_magenta"></button>
+                            <button class="color-btn" style="background: #00ffff;" onclick="sendIRCode('tv_cyan')" data-code="tv_cyan"></button>
+                            <button class="color-btn" style="background: #ffffff;" onclick="sendIRCode('tv_white')" data-code="tv_white"></button>
+                            <button class="color-btn" style="background: #ffa500;" onclick="sendIRCode('tv_orange')" data-code="tv_orange"></button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Learning Tab Content -->
+            <div class="tab-content" id="learningTab">
+                <div class="learning-content">
+                    <h2><i class="fa-solid fa-graduation-cap"></i> Tryb Nauki</h2>
+                    <div class="pilot-selector">
+                        <button class="pilot-select-btn active" onclick="selectPilot('ceiling')" data-pilot="ceiling">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>Pilot Sufitowy</span>
+                        </button>
+                        <button class="pilot-select-btn" onclick="selectPilot('tv')" data-pilot="tv">
+                            <i class="fa-solid fa-tv"></i>
+                            <span>Pilot TV</span>
+                        </button>
+                    </div>
+                    <div class="learning-instructions">
+                        <p>Kliknij przycisk do nauki:</p>
+                    </div>
+                    <div class="learning-remote" id="learningRemote">
+                        <!-- Remote buttons will be populated here -->
+                    </div>
+                    <div class="learning-status" id="learningStatus" style="display: none;">
+                        <div class="progress-ring">
+                            <div class="progress-bar-circular" id="learningProgress"></div>
+                        </div>
+                        <div class="learning-info">
+                            <h3>Nauka w toku...</h3>
+                            <p id="learningTimer">30s pozostało</p>
+                            <p>Naciśnij przycisk na fizycznym pilocie</p>
+                        </div>
+                    </div>
                 </div>
-            </header>
+            </div>
 
-            <main class="main-grid">
-
-                <section id="ledControlCard" class="card">
-                    <h3 class="card-title"><i class="fa-solid fa-lightbulb-on"></i> Sterowanie Główne</h3>
-                    <div class="led-status-container">
-                        <div id="ledStatusIcon" class="led-icon"><i class="fa-solid fa-power-off"></i></div>
-                        <div class="led-info">
-                            <h2 id="ledStatus">Wyłączone</h2>
-                            <p id="ledTimer">Naciśnij przycisk, aby włączyć</p>
-                        </div>
-                    </div>
-                    <div class="progress-bar-container" id="ledProgressBg">
-                        <div class="progress-bar" id="ledProgressBar"></div>
-                    </div>
-
-                    <button class="toggle-button" onclick="toggleLed()">
-                        <span class="button-text">Przełącz Oświetlenie</span>
-                        <span class="button-loader"><i class="fa-solid fa-spinner fa-spin"></i></span>
-                    </button>
-                </section>
-
-                <section class="card">
-                    <h3 class="card-title"><i class="fa-solid fa-cloud-sun"></i> Status & Pogoda</h3>
-                    <div class="weather-display">
-                        <i id="weatherIcon" class="fa-solid fa-spinner fa-spin weather-icon"></i>
-                        <div class="weather-details">
-                            <h2 id="temperature">--°C</h2>
-                            <p id="weatherDescription">Ładowanie...</p>
-                        </div>
-                    </div>
-                    <p class="location-name"><i class="fa-solid fa-location-dot"></i> <span id="locationName">...</span></p>
-                    <div class="sun-info">
-                        <span><i class="fa-solid fa-sunrise"></i> Wschód: <b id="sunrise">...</b></span>
-                        <span><i class="fa-solid fa-sunset"></i> Zachód: <b id="sunset">...</b></span>
-                    </div>
-                    <div id="pirStatus" class="pir-status">
-                        <i class="fa-solid fa-circle-notch fa-spin"></i> Ładowanie statusu PIR...
-                    </div>
-                </section>
-
-                <section class="card card-wide">
-                    <h3 class="card-title"><i class="fa-solid fa-robot"></i> Automatyka & Progi LDR</h3>
-                    <div class="ldr-automation-grid">
-                        <div class="ldr-chart-container">
-                            <canvas id="ldrChart"></canvas>
-                            <div class="chart-center-text">
-                                <span id="ldrValue">...</span>
-                                <small>LDR</small>
+            <!-- Settings Tab Content -->
+            <div class="tab-content" id="settingsTab">
+                <div class="settings-content">
+                    <h2><i class="fa-solid fa-gear"></i> Ustawienia</h2>
+                    <div class="settings-sections">
+                        <section class="settings-section">
+                            <h3>Połączenie</h3>
+                            <div class="setting-item">
+                                <label>Status ESP32:</label>
+                                <span id="espStatus">Rozłączony</span>
                             </div>
-                        </div>
-                        <div class="ldr-controls">
-                             <div class="automation-mode">
-                                <span class="mode-label">Tryb Słońce</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="modeSelect" onchange="setControlMode(this.checked ? 1 : 0)">
-                                    <span class="slider"></span>
-                                </label>
-                                <span class="mode-label">Tryb LDR</span>
+                            <div class="setting-item">
+                                <label>ID ESP32:</label>
+                                <span>klaj886</span>
                             </div>
-                            <div class="ldr-config">
-                                <h4>Ustaw Progi Aktywacji LDR</h4>
-                                <div class="range-group">
-                                    <label for="ldrThresholdLow">MIN</label>
-                                    <input type="range" id="ldrThresholdLowSlider" min="0" max="1023" step="1" oninput="onRangeInputSliderLow()">
-                                    <input type="number" id="ldrThresholdLow" min="0" max="1023" onchange="onRangeInputNum()">
-                                </div>
-                                <div class="range-group">
-                                    <label for="ldrThresholdHigh">MAX</label>
-                                    <input type="range" id="ldrThresholdHighSlider" min="0" max="1023" step="1" oninput="onRangeInputSliderHigh()">
-                                    <input type="number" id="ldrThresholdHigh" min="0" max="1023" onchange="onRangeInputNum()">
+                            <button class="setting-btn" onclick="reconnectESP()">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                                Ponów połączenie
+                            </button>
+                        </section>
+
+                        <section class="settings-section">
+                            <h3>Zapisane Kody</h3>
+                            <div class="codes-table" id="codesTable">
+                                <div class="table-placeholder">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Ładowanie...
                                 </div>
                             </div>
-                             <button class="reset-button" onclick="resetLdrSettings()"><i class="fa-solid fa-arrows-rotate"></i> Resetuj Progi</button>
-                        </div>
+                            <div class="setting-actions">
+                                <button class="setting-btn" onclick="loadCodes()">
+                                    <i class="fa-solid fa-download"></i>
+                                    Pobierz Kody
+                                </button>
+                                <button class="setting-btn" onclick="exportConfig()">
+                                    <i class="fa-solid fa-file-export"></i>
+                                    Eksportuj Konfigurację
+                                </button>
+                                <button class="setting-btn" onclick="importConfig()">
+                                    <i class="fa-solid fa-file-import"></i>
+                                    Importuj Konfigurację
+                                </button>
+                            </div>
+                        </section>
                     </div>
-                </section>
+                </div>
+            </div>
+        </main>
 
-                <section class="card card-wide">
-                    <h3 class="card-title"><i class="fa-solid fa-list-ul"></i> Dziennik Zdarzeń</h3>
-                    <div id="logsList" class="logs-list">
-                        <div class="log-placeholder"><i class="fa-solid fa-spinner fa-spin"></i> Ładowanie logów...</div>
-                    </div>
-                </section>
-            </main>
-        </div>
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="switchTab('room')" data-tab="room">
+                <i class="fa-solid fa-house"></i>
+                <span>Pokój</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('learning')" data-tab="learning">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>Nauka</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('settings')" data-tab="settings">
+                <i class="fa-solid fa-gear"></i>
+                <span>Ustawienia</span>
+            </button>
+        </nav>
     </div>
+
     <script src="js/script.js"></script>
 </body>
 </html>
